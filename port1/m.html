@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Elite Motors | Models</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Basic reset + Elite Motors look (condensed for brevity) */
+    body {font-family: 'Montserrat', sans-serif; margin:0; background:#0a0a0a; color:#fff;}
+    header{padding:18px 5%;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.9);position:sticky;top:0;z-index:1000}
+    .logo-text{font-weight:700;font-size:1.6rem} .logo-text span{color:#ff3c00}
+    nav ul{display:flex;gap:18px;list-style:none;padding:0;margin:0}
+    nav a{color:#fff;text-decoration:none}
+    .page-hero{height:36vh;background:url("https://images.unsplash.com/photo-1503376780353-7e6692767b70") center/cover no-repeat;display:flex;align-items:center;justify-content:center}
+    .page-hero::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55)}
+    .page-hero h1{position:relative;z-index:1;font-size:2.6rem;text-transform:uppercase}
+
+    .container{padding:40px 5%}
+    .search-row{display:flex;gap:12px;align-items:center;justify-content:center;margin-bottom:18px}
+    .search-row input{width:60%;max-width:700px;padding:12px 16px;border-radius:30px;border:none;font-size:1rem}
+    .filters{display:flex;gap:8px;align-items:center}
+
+    .models-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+    .model-card{background:#151515;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.5);transition:transform .18s}
+    .model-card:hover{transform:translateY(-6px)}
+    .model-image img{width:100%;height:170px;object-fit:cover;display:block}
+    .model-body{padding:12px}
+    .model-body h3{margin:8px 0;font-size:1.05rem}
+    .meta{color:#aaa;font-size:.9rem;margin-bottom:8px}
+    .price{color:#ff3c00;font-weight:700;margin-bottom:8px}
+    .cta{display:block;padding:10px;border-radius:30px;text-align:center;background:#ff3c00;color:#fff;font-weight:600;border:none;cursor:pointer}
+
+    .loading{text-align:center;color:#aaa;padding:18px}
+    .no-results{color:#aaa;text-align:center;padding:30px}
+
+    footer{padding:40px 5%;text-align:center;color:#aaa;background:#070707;margin-top:30px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-text">Elite<span>Motors</span></div>
+    <nav>
+      <ul>
+        <li><a href="elite.html">Home</a></li>
+        <li><a href="models.html">Models</a></li>
+        <li><a href="inventory.html">Inventory</a></li>
+        <li><a href="finance.html">Finance</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <h1>All Models</h1>
+  </section>
+
+  <main class="container">
+    <div class="search-row">
+      <input id="searchInput" type="search" placeholder="Search by brand, model, year... (works as you type)">
+      <div class="filters">
+        <select id="yearFilter"><option value="">All years</option></select>
+        <select id="makeFilter"><option value="">All makes</option></select>
+      </div>
+    </div>
+
+    <div id="modelsGrid" class="models-grid" aria-live="polite"></div>
+
+    <div id="loading" class="loading">Loading...</div>
+    <div id="noResults" class="no-results" style="display:none">No cars found.</div>
+  </main>
+
+  <footer>&copy; Elite Motors — Use a real dataset or API for full coverage.</footer>
+
+<script>
+/*
+  How this works:
+  - This front-end expects a paginated API at /api/cars with params:
+      GET /api/cars?search=...&make=...&year=...&page=1&perPage=24
+    It should return JSON:
+      { data: [{id, make, model, trim, year, price, image}], total: 12345, page:1, perPage:24 }
+  - If /api/cars is not available, the script falls back to a small built-in sample.
+  - Infinite scroll triggers loading next pages.
+  - For very large datasets: implement server-side search & paging.
+*/
+
+const API_ENDPOINT = '/api/cars'; // <-- replace with your API endpoint or hosted JSON
+const PER_PAGE = 24;
+
+let state = {
+  page: 1,
+  perPage: PER_PAGE,
+  loading: false,
+  finished: false,
+  query: '',
+  make: '',
+  year: ''
+};
+
+// Utility to create card elements
+function makeCard(car){
+  const container = document.createElement('div');
+  container.className = 'model-card';
+  container.innerHTML = `
+    <div class="model-image"><img src="${car.image || 'https://via.placeholder.com/800x450?text=Car'}" alt="${escapeHtml(car.make+' '+car.model)}"></div>
+    <div class="model-body">
+      <h3>${escapeHtml(car.year ? car.year + ' ' : '')}${escapeHtml(car.make)} ${escapeHtml(car.model)}</h3>
+      <div class="meta">${escapeHtml(car.trim || '')} • ${escapeHtml(car.engine || '')}</div>
+      <div class="price">${escapeHtml(car.price || '')}</div>
+      <button class="cta" data-id="${escapeHtml(car.id || '')}">View Details</button>
+    </div>
+  `;
+  return container;
+}
+
+// Basic HTML escape
+function escapeHtml(str=''){ return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+
+// Append items to grid
+function renderCars(items, append=true){
+  const grid = document.getElementById('modelsGrid');
+  if(!append) grid.innerHTML = '';
+  items.forEach(i => grid.appendChild(makeCard(i)));
+}
+
+// Show/hide loading
+function setLoading(v){ state.loading = v; document.getElementById('loading').style.display = v ? 'block' : 'none'; }
+
+// Show no results
+function showNoResults(show){ document.getElementById('noResults').style.display = show ? 'block' : 'none'; }
+
+// Fetch page from API or fallback
+async function fetchPage(){
+  if(state.loading || state.finished) return;
+  setLoading(true);
+
+  // Build URL
+  const params = new URLSearchParams({
+    search: state.query || '',
+    make: state.make || '',
+    year: state.year || '',
+    page: state.page,
+    perPage: state.perPage
+  });
+
+  try {
+    // Try reading from API
+    const resp = await fetch(API_ENDPOINT + '?' + params.toString());
+    if(!resp.ok) throw new Error('API not available');
+    const json = await resp.json();
+
+    const items = Array.isArray(json.data) ? json.data : [];
+    const total = json.total || 0;
+    // if this is first page and no items, show message
+    if(state.page === 1 && items.length === 0){
+      document.getElementById('modelsGrid').innerHTML = '';
+      showNoResults(true);
+    } else {
+      showNoResults(false);
+      renderCars(items, state.page !== 1);
+    }
+
+    // check finished
+    const loaded = (state.page * state.perPage);
+    if(loaded >= total) state.finished = true;
+    else state.page += 1;
+
+  } catch (err) {
+    // If API fails, fallback to local sample (only once)
+    if(!window._usedLocalFallback){
+      window._usedLocalFallback = true;
+      console.warn('API not available — using local sample. For full coverage you must provide an API or dataset.');
+      useLocalFallback();
+    } else {
+      console.error(err);
+      showNoResults(true);
+    }
+  } finally {
+    setLoading(false);
+  }
+}
+
+// Local fallback sample (small). Replace or expand for offline use.
+const LOCAL_SAMPLE = (function build(){
+  const models = [
+    {id:'b1', make:'BMW', model:'M4 Competition', year:2021, trim:'Competition', engine:'503 HP', price:'$79,900', image:'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80'},
+    {id:'m1', make:'Mercedes', model:'AMG GT', year:2022, trim:'GT', engine:'523 HP', price:'$115,900', image:'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80'},
+    {id:'a1', make:'Audi', model:'RS7', year:2023, trim:'Sportback', engine:'591 HP', price:'$119,500', image:'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'},
+    {id:'t1', make:'Tesla', model:'Model S Plaid', year:2022, trim:'Plaid', engine:'1020 HP', price:'$135,000', image:'https://images.unsplash.com/photo-1616788075478-73c815d9ef99?auto=format&fit=crop&w=1200&q=80'},
+    // ... add a few dozen here if you like for offline dev
+  ];
+  // replicate to emulate many pages (for demo only)
+  const big = [];
+  for(let i=0;i<200;i++){
+    const src = models[i % models.length];
+    big.push(Object.assign({}, src, { id: src.id+'-'+i, year: (src.year || 2020) - (i%6), make: src.make, model: src.model + (i>9?(' '+(i+1)):'') }));
+  }
+  return big;
+})();
+
+function useLocalFallback(){
+  // Filter local sample according to query and then paginate
+  const grid = document.getElementById('modelsGrid');
+  const all = LOCAL_SAMPLE.filter(c => {
+    const q = state.query.trim().toLowerCase();
+    if(!q) return true;
+    return (c.make + ' ' + c.model + ' ' + (c.year||'') + ' ' + (c.trim||'')).toLowerCase().includes(q);
+  }).filter(c => state.make ? c.make.toLowerCase() === state.make.toLowerCase() : true)
+    .filter(c => state.year ? String(c.year) === String(state.year) : true);
+
+  // paginate locally
+  const start = (state.page - 1) * state.perPage;
+  const slice = all.slice(start, start + state.perPage);
+
+  if(state.page === 1) grid.innerHTML = '';
+  if(slice.length === 0 && state.page === 1){
+    showNoResults(true);
+    state.finished = true;
+  } else {
+    renderCars(slice, state.page !== 1);
+    showNoResults(false);
+    const loaded = start + slice.length;
+    if(loaded >= all.length) state.finished = true; else state.page += 1;
+  }
+}
+
+// Reset and run new search
+function resetAndSearch(){
+  state.page = 1; state.finished = false;
+  document.getElementById('modelsGrid').innerHTML = '';
+  fetchPage();
+}
+
+// Wire up search + filters
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  state.query = e.target.value;
+  state.page = 1; state.finished = false;
+  // clear grid and fetch new results (debounce)
+  if(window._searchDeb) clearTimeout(window._searchDeb);
+  window._searchDeb = setTimeout(() => {
+    document.getElementById('modelsGrid').innerHTML = '';
+    const usedAPI = fetchPage();
+  }, 250);
+});
+
+document.getElementById('makeFilter').addEventListener('change', (e) => {
+  state.make = e.target.value;
+  resetAndSearch();
+});
+
+document.getElementById('yearFilter').addEventListener('change', (e) => {
+  state.year = e.target.value;
+  resetAndSearch();
+});
+
+// infinite scroll
+window.addEventListener('scroll', () => {
+  const nearBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 900);
+  if(nearBottom && !state.loading && !state.finished){
+    fetchPage();
+  }
+});
+
+// Initial load: try to populate make/year filters (if API provides lists)
+async function init(){
+  // Try to load filters from API
+  try {
+    const resp = await fetch(API_ENDPOINT + '/meta'); // optional endpoint that returns {makes:[...], years:[...]}
+    if(resp.ok){
+      const meta = await resp.json();
+      populateFilters(meta.makes||[], meta.years||[]);
+    } else {
+      // fallback: derive filters from local sample
+      populateFilters([...new Set(LOCAL_SAMPLE.map(c=>c.make))], [...new Set(LOCAL_SAMPLE.map(c=>c.year))]);
+    }
+  } catch(err){
+    populateFilters([...new Set(LOCAL_SAMPLE.map(c=>c.make))], [...new Set(LOCAL_SAMPLE.map(c=>c.year))]);
+  }
+
+  // load first page
+  fetchPage();
+}
+
+function populateFilters(makes, years){
+  const makeSel = document.getElementById('makeFilter');
+  const yearSel = document.getElementById('yearFilter');
+  makes.sort().forEach(m => {
+    const o = document.createElement('option'); o.value = m; o.textContent = m; makeSel.appendChild(o);
+  });
+  years.sort((a,b)=>b-a).forEach(y => {
+    const o = document.createElement('option'); o.value = y; o.textContent = y; yearSel.appendChild(o);
+  });
+}
+
+// initialize
+init();
+
+</script>
+</body>
+</html>

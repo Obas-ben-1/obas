@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory | Elite Motors</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+            overflow-x: hidden;
+            background: #0a0a0a;
+            padding-top: 80px;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.5s;
+            background: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-text {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .logo-text span {
+            color: #ff3c00;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        nav ul li a:hover {
+            color: #ff3c00;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-button {
+            background: #ff3c00;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            background: #e03500;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 60, 0, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1537005081207-04f90e3ba640?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1674&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 5%;
+            text-align: center;
+            color: #fff;
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-header h1 span {
+            color: #ff3c00;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            color: #ddd;
+            line-height: 1.6;
+        }
+
+        /* Inventory Controls */
+        .inventory-controls {
+            padding: 40px 5%;
+            background: #0f0f0f;
+        }
+
+        .controls-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .controls-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .search-box {
+            display: flex;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #333;
+            border-radius: 30px 0 0 30px;
+            font-size: 1rem;
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .search-box button {
+            padding: 0 25px;
+            border: none;
+            border-radius: 0 30px 30px 0;
+            background: #ff3c00;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .filter-sort {
+            display: flex;
+            gap: 15px;
+        }
+
+        .filter-sort select {
+            flex: 1;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Inventory Grid */
+        .inventory-section {
+            padding: 60px 5%;
+            background: #0a0a0a;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .inventory-card {
+            background: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.5s, box-shadow 0.5s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .inventory-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(255, 60, 0, 0.2);
+        }
+
+        .car-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .inventory-card:hover .car-image img {
+            transform: scale(1.1);
+        }
+
+        .car-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: #4caf50;
+            color: #fff;
+        }
+
+        .status-reserved {
+            background: #ff9800;
+            color: #fff;
+        }
+
+        .status-sold {
+            background: #f44336;
+            color: #fff;
+        }
+
+        .car-details {
+            padding: 20px;
+        }
+
+        .car-details h3 {
+            color: #fff;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .car-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .car-price {
+            color: #ff3c00;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .car-specs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+
+        .spec {
+            text-align: center;
+            color: #fff;
+        }
+
+        .spec i {
+            color: #ff3c00;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .spec span {
+            display: block;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .car-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .car-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-details {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-details:hover {
+            background: #444;
+        }
+
+        .btn-reserve {
+            background: #ff3c00;
+            color: #fff;
+        }
+
+        .btn-reserve:hover {
+            background: #e03500;
+        }
+
+        /* Inventory Summary */
+        .inventory-summary {
+            padding: 40px 5%;
+            background: #0f0f0f;
+            margin-top: 40px;
+        }
+
+        .summary-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .summary-card {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .summary-card h3 {
+            color: #fff;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .summary-card p {
+            color: #aaa;
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            padding: 80px 5% 30px;
+            color: #aaa;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-column h3 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: #ff3c00;
+        }
+
+        .footer-column p {
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ff3c00;
+            padding-left: 5px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            color: #fff;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: #ff3c00;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                flex-direction: column;
+                padding: 20px 0;
+                text-align: center;
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            nav ul li {
+                margin: 10px 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .page-header p {
+                font-size: 1rem;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-box input {
+                border-radius: 30px;
+                margin-bottom: 10px;
+            }
+            
+            .search-box button {
+                border-radius: 30px;
+                padding: 15px;
+            }
+            
+            .filter-sort {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .cta-button {
+                padding: 10px 20px;
+            }
+            
+            .car-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header id="header">
+        <div class="logo">
+            <div class="logo-text">Elite<span>Motors</span></div>
+        </div>
+        <nav>
+            <ul id="nav-menu">
+                <li><a href="elite.html">Home</a></li>
+                <li><a href="models.html">Models</a></li>
+                <li><a href="inventory.html" class="active">Inventory</a></li>
+                <li><a href="finance.html">Finance</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <button class="cta-button" id="test-drive-btn">Schedule Test Drive</button>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Our <span>Inventory</span></h1>
+        <p>Browse our extensive collection of premium vehicles available for purchase</p>
+    </section>
+
+    <!-- Inventory Controls -->
+    <section class="inventory-controls">
+        <div class="controls-container">
+            <div class="search-box">
+                <input type="text" id="inventory-search" placeholder="Search by model, brand, or features...">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="filter-sort">
+                <select id="status-filter">
+                    <option value="all">All Statuses</option>
+                    <option value="available">Available</option>
+                    <option value="reserved">Reserved</option>
+                </select>
+                <select id="sort-by">
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="year-desc">Newest First</option>
+                    <option value="year-asc">Oldest First</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inventory Grid -->
+    <section class="inventory-section">
+        <div class="inventory-grid" id="inventory-container">
+            <!-- Inventory items will be dynamically inserted here -->
+        </div>
+    </section>
+
+    <!-- Inventory Summary -->
+    <section class="inventory-summary">
+        <div class="summary-container">
+            <div class="summary-card">
+                <h3 id="total-vehicles">0</h3>
+                <p>Total Vehicles</p>
+            </div>
+            <div class="summary-card">
+                <h3 id="available-vehicles">0</h3>
+                <p>Available Now</p>
+            </div>
+            <div class="summary-card">
+                <h3 id="average-price">₦0</h3>
+                <p>Average Price</p>
+            </div>
+            <div class="summary-card">
+                <h3 id="new-arrivals">0</h3>
+                <p>New Arrivals</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>About Elite Motors</h3>
+                <p>We offer the finest selection of premium vehicles, providing exceptional service and expertise to driving enthusiasts.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="elite.html">Home</a></li>
+                    <li><a href="models.html">Models</a></li>
+                    <li><a href="inventory.html">Inventory</a></li>
+                    <li><a href="finance.html">Finance Options</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt"></i> 21 okabie close rumuomoi, rivers</li>
+                    <li><i class="fas fa-phone"></i> +234 913-685-2554</li>
+                    <li><i class="fas fa-envelope"></i> info@elitemotors.com</li>
+                    <li><i class="fas fa-clock"></i> Mon-Sat: 9AM - 8PM</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 Elite Motors. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Inventory data
+        const inventoryData = [
+            {
+                id: 1,
+                model: "Mercedes-Benz S-Class",
+                brand: "Mercedes",
+                year: 2023,
+                price: 65000000,
+                status: "available",
+                image: "https://images.unsplash.com/photo-1621135802920-133df287f89c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+                features: { 
+                    engine: "3.0L I6", 
+                    hp: 429, 
+                    fuel: "Petrol",
+                    mileage: "5,200 km",
+                    transmission: "Automatic",
+                    color: "Black"
+                },
+                arrivalDate: "2023-10-15"
+            },
+            {
+                id: 2,
+                model: "BMW 7 Series",
+                brand: "BMW",
+                year: 2023,
+                price: 68000000,
+                status: "available",
+                image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+                features: { 
+                    engine: "3.0L I6", 
+                    hp: 375, 
+                    fuel: "Petrol",
+                    mileage: "3,800 km",
+                    transmission: "Automatic",
+                    color: "White"
+                },
+                arrivalDate: "2023-11-05"
+            },
+            {
+                id: 3,
+                model: "Audi A8",
+                brand: "Audi",
+                year: 2023,
+                price: 62000000,
+                status: "reserved",
+                image: "https://images.unsplash.com/photo-1606152536278-5dff2cb8e74b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+                features: { 
+                    engine: "3.0L V6", 
+                    hp: 335, 
+                    fuel: "Petrol",
+                    mileage: "7,100 km",
+                    transmission: "Automatic",
+                    color: "Gray"
+                },
+                arrivalDate: "2023-09-22"
+            },
+            {
+                id: 4,
+                model: "Porsche 911",
+                brand: "Porsche",
+                year: 2023,
+                price: 95000000,
+                status: "available",
+                image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+                features: { 
+                    engine: "3.0L Flat-6", 
+                    hp: 379, 
+                    fuel: "Petrol",
+                    mileage: "2,500 km",
+                    transmission: "Automatic",
+                    color: "Red"
+                },
+                arrivalDate: "2023-12-01"
+            },
+            {
+                id: 5,
+                model: "Lexus LS",
+                brand: "Lexus",
+                year: 2023,
+                price: 55000000,
+                status: "available",
+                image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+                features: { 
+                    engine: "3.5L V6", 
+                    hp: 416, 
+                    fuel: "Hybrid",
+                    mileage: "6,300 km",
+                    transmission: "Automatic",
+                    color: "Silver"
+                },
+                arrivalDate: "2023-10-28"
+            },
+            {
+                id: 6,
+                model: "Mercedes-Benz G-Wagon",
+                brand: "Mercedes",
+                year: 2023,
+                price: 120000000,
+                status: "available",
+                image: "https://images.unsplash.com/photo-1563720223880-4d93eef1f1c2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+                features: { 
+                    engine: "4.0L V8", 
+                    hp: 577, 
+                    fuel: "Petrol",
+                    mileage: "4,200 km",
+                    transmission: "Automatic",
+                    color: "Black"
+                },
+                arrivalDate: "2023-11-15"
+            },
+            {
+                id: 7,
+                model: "BMW X7",
+                brand: "BMW",
+                year: 2023,
+                price: 75000000,
+                status: "reserved",
+                image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+                features: { 
+                    engine: "3.0L I6", 
+                    hp: 335, 
+                    fuel: "Petrol",
+                    mileage: "5,800 km",
+                    transmission: "Automatic",
+                    color: "Blue"
+                },
+                arrivalDate: "2023-09-10"
+            },
+            {
+                id: 8,
+                model: "Audi Q8",
+                brand: "Audi",
+                year: 2023,
+                price: 72000000,
+                status: "available",
+                image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+                features: { 
+                    engine: "3.0L V6", 
+                    hp: 335, 
+                    fuel: "Petrol",
+                    mileage: "3,200 km",
+                    transmission: "Automatic",
+                    color: "White"
+                },
+                arrivalDate: "2023-12-05"
+            }
+        ];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayInventory(inventoryData);
+            updateSummary(inventoryData);
+            setupEventListeners();
+        });
+
+        // Display inventory items
+        function displayInventory(inventory) {
+            const container = document.getElementById('inventory-container');
+            container.innerHTML = '';
+            
+            if (inventory.length === 0) {
+                container.innerHTML = '<div class="no-results" style="grid-column: 1/-1; text-align: center; color: #fff; padding: 40px;">No vehicles found matching your criteria</div>';
+                return;
+            }
+            
+            inventory.forEach(car => {
+                const card = document.createElement('div');
+                card.className = 'inventory-card';
+                
+                card.innerHTML = `
+                    <div class="car-image">
+                        <img src="${car.image}" alt="${car.model}">
+                        <div class="car-status status-${car.status}">${car.status.charAt(0).toUpperCase() + car.status.slice(1)}</div>
+                    </div>
+                    <div class="car-details">
+                        <h3>${car.model}</h3>
+                        <div class="car-meta">
+                            <span>${car.brand}</span>
+                            <span>${car.year}</span>
+                        </div>
+                        <div class="car-price">₦${car.price.toLocaleString()}</div>
+                        <div class="car-specs">
+                            <div class="spec">
+                                <i class="fas fa-cogs"></i>
+                                <span>${car.features.engine}</span>
+                            </div>
+                            <div class="spec">
+                                <i class="fas fa-horse-head"></i>
+                                <span>${car.features.hp} HP</span>
+                            </div>
+                            <div class="spec">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>${car.features.fuel}</span>
+                            </div>
+                        </div>
+                        <div class="car-specs">
+                            <div class="spec">
+                                <i class="fas fa-road"></i>
+                                <span>${car.features.mileage}</span>
+                            </div>
+                            <div class="spec">
+                                <i class="fas fa-palette"></i>
+                                <span>${car.features.color}</span>
+                            </div>
+                        </div>
+                        <div class="car-actions">
+                            <button class="btn-details">View Details</button>
+                            <button class="btn-reserve" ${car.status !== 'available' ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>${car.status === 'available' ? 'Reserve Now' : 'Reserved'}</button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Update summary information
+        function updateSummary(inventory) {
+            const totalVehicles = inventory.length;
+            const availableVehicles = inventory.filter(car => car.status === 'available').length;
+            
+            const totalPrice = inventory.reduce((sum, car) => sum + car.price, 0);
+            const averagePrice = totalPrice / totalVehicles;
+            
+            // Count new arrivals (within the last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const newArrivals = inventory.filter(car => {
+                const arrivalDate = new Date(car.arrivalDate);
+                return arrivalDate >= thirtyDaysAgo;
+            }).length;
+            
+            document.getElementById('total-vehicles').textContent = totalVehicles;
+            document.getElementById('available-vehicles').textContent = availableVehicles;
+            document.getElementById('average-price').textContent = `₦${Math.round(averagePrice).toLocaleString()}`;
+            document.getElementById('new-arrivals').textContent = newArrivals;
+        }
+
+        // Filter and sort inventory
+        function filterInventory() {
+            const searchText = document.getElementById('inventory-search').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+            const sortBy = document.getElementById('sort-by').value;
+            
+            let filtered = inventoryData.filter(car => {
+                // Status filter
+                if (statusFilter !== 'all' && car.status !== statusFilter) {
+                    return false;
+                }
+                
+                // Search text
+                if (searchText) {
+                    const searchableText = `${car.brand} ${car.model} ${car.features.color} ${car.features.fuel} ${car.features.transmission}`.toLowerCase();
+                    if (!searchableText.includes(searchText)) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Sort results
+            switch(sortBy) {
+                case 'price-asc':
+                    filtered.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-desc':
+                    filtered.sort((a, b) => b.price - a.price);
+                    break;
+                case 'year-desc':
+                    filtered.sort((a, b) => b.year - a.year);
+                    break;
+                case 'year-asc':
+                    filtered.sort((a, b) => a.year - b.year);
+                    break;
+            }
+            
+            displayInventory(filtered);
+            updateSummary(filtered);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('search-btn').addEventListener('click', filterInventory);
+            document.getElementById('inventory-search').addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    filterInventory();
+                }
+            });
+            
+            // Filter and sort functionality
+            document.getElementById('status-filter').addEventListener('change', filterInventory);
+            document.getElementById('sort-by').addEventListener('change', filterInventory);
+            
+            // Mobile menu toggle
+            document.getElementById('menu-toggle').addEventListener('click', function() {
+                document.getElementById('nav-menu').classList.toggle('active');
+            });
+            
+            // Test drive button
+            document.getElementById('test-drive-btn').addEventListener('click', function() {
+                alert('Thank you for your interest! Our team will contact you to schedule a test drive.');
+            });
+            
+            // Reserve and details buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-reserve') && !e.target.disabled) {
+                    const card = e.target.closest('.inventory-card');
+                    const modelName = card.querySelector('h3').textContent;
+                    alert(`You've reserved the ${modelName}. Our sales team will contact you to complete the process.`);
+                    e.target.textContent = 'Reserved';
+                    e.target.disabled = true;
+                    e.target.style.opacity = '0.5';
+                    e.target.style.cursor = 'not-allowed';
+                }
+                
+                if (e.target.classList.contains('btn-details')) {
+                    const card = e.target.closest('.inventory-card');
+                    const modelName = card.querySelector('h3').textContent;
+                    alert(`Detailed information about the ${modelName} will be shown here. In a real application, this would open a detailed view page.`);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

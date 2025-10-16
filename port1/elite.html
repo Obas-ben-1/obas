@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Motors | Premium Luxury Cars</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+            overflow-x: hidden;
+            background: #0a0a0a;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.5s;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        header.scrolled {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 5%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .logo-text span {
+            color: #ff3c00;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        nav ul li a:hover {
+            color: #ff3c00;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-button {
+            background: #ff3c00;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            background: #e03500;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 60, 0, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section with Video */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            padding: 0 20px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-content h1 span {
+            color: #ff3c00;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            font-weight: 300;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Car Showcase Section */
+        .showcase {
+            padding: 100px 5%;
+            background: #0f0f0f;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            color: #fff;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+
+        .section-title h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #ff3c00;
+        }
+
+        .section-title p {
+            color: #aaa;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .car-card {
+            background: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.5s, box-shadow 0.5s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .car-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 30px rgba(255, 60, 0, 0.2);
+        }
+
+        .car-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .car-card:hover .car-image img {
+            transform: scale(1.1);
+        }
+
+        .car-details {
+            padding: 20px;
+        }
+
+        .car-details h3 {
+            color: #fff;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .car-details p {
+            color: #aaa;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .car-specs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+
+        .spec {
+            text-align: center;
+            color: #fff;
+        }
+
+        .spec i {
+            color: #ff3c00;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .spec span {
+            display: block;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .car-price {
+            color: #ff3c00;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 5%;
+            background: #151515;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #ff3c00;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .feature-card p {
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        /* Test Drive Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #ff3c00;
+        }
+
+        .modal h2 {
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #fff;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            padding: 70px 5% 30px;
+            color: #aaa;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-column h3 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: #ff3c00;
+        }
+
+        .footer-column p {
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ff3c00;
+            padding-left: 5px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            color: #fff;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: #ff3c00;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+            
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                flex-direction: column;
+                padding: 20px 0;
+                text-align: center;
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            nav ul li {
+                margin: 10px 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content p {
+                font-size: 1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .cta-button {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header id="header">
+        <div class="logo">
+            <div class="logo-text">Elite<span>Motors</span></div>
+        </div>
+        <nav>
+            <ul id="nav-menu">
+                <li><a href="elite.html">Home</a></li>
+                <li><a href="models.html">Models</a></li>
+                <li><a href="inventory.html">Inventory</a></li>
+                <li><a href="finance.html">Finance</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <button class="cta-button" id="test-drive-btn">Schedule Test Drive</button>
+    </header>
+
+    <!-- Hero Section with Video Background -->
+    <section class="hero">
+        <div class="video-background">
+            <video autoplay muted loop playsinline>
+                <!-- <source src="" type="video/mp4"> -->
+                 <source src="./videos/tiktokio.com_D0BIUncu0tfYzXR2c4lE.mp4" type="">
+                Your browser does not support the video tag.
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <h1>Experience <span>Premium</span> Driving</h1>
+            <p>Discover the perfect blend of luxury, performance, and innovation with our premium selection of luxury vehicles from top brands worldwide.</p>
+            <button class="cta-button">Explore Inventory</button>
+        </div>
+    </section>
+
+    <!-- Car Showcase Section -->
+    <section class="showcase">
+        <div class="section-title">
+            <h2>Featured Models</h2>
+            <p>Explore our exclusive collection of high-performance luxury vehicles</p>
+        </div>
+        <div class="cars-grid">
+            <div class="car-card animate">
+                <div class="car-image">
+                    <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" alt="BMW M4">
+                </div>
+                <div class="car-details">
+                    <h3>BMW M4 Competition</h3>
+                    <p>The BMW M4 Competition Coupe combines iconic design with breathtaking performance.</p>
+                    <div class="car-specs">
+                        <div class="spec">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>503 HP</span>
+                        </div>
+                        <div class="spec">
+                            <i class="fas fa-clock"></i>
+                            <span>3.8s 0-60</span>
+                        </div>
+                        <div class="spec">
+                            <i class="fas fa-gas-pump"></i>
+                            <span>23 MPG</span>
+                        </div>
+                    </div>
+                    <div class="car-price">$79,900</div>
+                    <button class="cta-button">View Details</button>
+                </div>
+            </div>
+            <div class="car-card animate">
+                <div class="car-image">
+                    <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" alt="Mercedes AMG">
+                </div>
+                <div class="car-details">
+                    <h3>Mercedes-AMG GT</h3>
+                    <p>The Mercedes-AMG GT combines breathtaking design with exhilarating performance.</p>
+                    <div class="car-specs">
+                        <div class="spec">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>523 HP</span>
+                        </div>
+                        <div class="spec">
+                            <i class="fas fa-clock"></i>
+                            <span>3.6s 0-60</span>
+                        </div>
+                        <div class="spec">
+                            <i class="fas fa-gas-pump"></i>
+                            <span>21 MPG</span>
+                        </div>
+                    </div>
+                    <div class="car-price">$115,900</div>
+                    <button class="cta-button">View Details</button>
+                </div>
+            </div>
+            <div class="car-card animate">
+                <div class="car-image">
+                    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" alt="Audi RS7">
+                </div>
+                <div class="car-details">
+                    <h3>Audi RS7 Sportback</h3>
+                    <p>The Audi RS7 Sportback offers spacious luxury, advanced technology, and powerful performance.</p>
+                    <div class="car-specs">
+                        <div class="spec">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>591 HP</span>
+                        </div>
+                        <div class="spec">
+                            <i class="fas fa-clock"></i>
+                            <span>3.5s 0-60</span>
+                        </div>
+                        <div class="spec">
+                            <i class="fas fa-gas-pump"></i>
+                            <span>20 MPG</span>
+                        </div>
+                    </div>
+                    <div class="car-price">$119,500</div>
+                    <button class="cta-button">View Details</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="section-title">
+            <h2>Why Choose Elite Motors</h2>
+            <p>Experience the unparalleled advantages of choosing our premium dealership</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card animate">
+                <div class="feature-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3>Expert Service</h3>
+                <p>Our team of automotive experts provides exceptional service, guidance, and after-sales support.</p>
+            </div>
+            <div class="feature-card animate">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Warranty & Protection</h3>
+                <p>Comprehensive warranty packages and protection plans for complete peace of mind.</p>
+            </div>
+            <div class="feature-card animate">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Premium Selection</h3>
+                <p>Curated collection of the finest luxury vehicles from world-renowned manufacturers.</p>
+            </div>
+            <div class="feature-card animate">
+                <div class="feature-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <h3>Quality Assurance</h3>
+                <p>Every vehicle undergoes rigorous inspection to ensure the highest quality standards.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Test Drive Modal -->
+    <div class="modal" id="test-drive-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2>Schedule a Test Drive</h2>
+            <form id="test-drive-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="car-model">Preferred Car Model</label>
+                    <select id="car-model" required>
+                        <option value="">Select a model</option>
+                        <option value="bmw-m4">BMW M4 Competition</option>
+                        <option value="mercedes-amg">Mercedes-AMG GT</option>
+                        <option value="audi-rs7">Audi RS7 Sportback</option>
+                        <option value="porsche-911">Porsche 911 Carrera</option>
+                        <option value="jaguar-f-type">Jaguar F-Type</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Preferred Date</label>
+                    <input type="date" id="date" required>
+                </div>
+                <button type="submit" class="cta-button">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>About Elite Motors</h3>
+                <p>We offer the finest selection of premium vehicles, providing exceptional service and expertise to driving enthusiasts.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Inventory</a></li>
+                    <li><a href="#">Finance Options</a></li>
+                    <li><a href="#">Service & Repair</a></li>
+                    <li><a href="#">Test Drive</a></li>
+                    <li><a href="#">Special Offers</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt"></i>21 okabie close rumuomoi, rivers </li>
+                    <li><i class="fas fa-phone"></i>+234 913-685-2554 </li>
+                    <li><i class="fas fa-envelope"></i> info@elitemotors.com</li>
+                    <li><i class="fas fa-clock"></i> Mon-Sat: 9AM - 8PM</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 Elite Motors. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Animation on scroll
+        function checkVisibility() {
+            const elements = document.querySelectorAll('.animate');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', checkVisibility);
+        window.addEventListener('load', checkVisibility);
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        
+        menuToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+
+        // Test Drive Modal
+        const testDriveBtn = document.getElementById('test-drive-btn');
+        const testDriveModal = document.getElementById('test-drive-modal');
+        const closeModal = document.getElementById('close-modal');
+        const testDriveForm = document.getElementById('test-drive-form');
+
+        testDriveBtn.addEventListener('click', function() {
+            testDriveModal.style.display = 'flex';
+        });
+
+        closeModal.addEventListener('click', function() {
+            testDriveModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === testDriveModal) {
+                testDriveModal.style.display = 'none';
+            }
+        });
+
+        testDriveForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you! Your test drive request has been submitted. We will contact you shortly.');
+            testDriveModal.style.display = 'none';
+            testDriveForm.reset();
+        });
+
+        // View Details buttons
+        const viewDetailsButtons = document.querySelectorAll('.car-card .cta-button');
+        viewDetailsButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const carName = this.parentElement.querySelector('h3').textContent;
+                alert(`You've selected the ${carName}. Our team will contact you with more details.`);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elite Motors | Models</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 20px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo-text {
+      color: #fff;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .logo-text span {
+      color: #ff3c00;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    nav ul li a:hover {
+      color: #ff3c00;
+    }
+
+    .page-hero {
+      background: url("https://images.unsplash.com/photo-1503376780353-7e6692767b70") center/cover no-repeat;
+      height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+    .page-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+    }
+    .page-hero h1 {
+      position: relative;
+      z-index: 1;
+      font-size: 3rem;
+      text-transform: uppercase;
+    }
+
+    .models-section {
+      padding: 60px 5%;
+    }
+    .search-bar {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .search-bar input {
+      padding: 12px 20px;
+      width: 60%;
+      max-width: 500px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+    }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    .model-card {
+      background: #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .model-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 25px rgba(255, 60, 0, 0.2);
+    }
+    .model-image img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .model-details {
+      padding: 15px;
+    }
+    .model-details h3 {
+      margin: 10px 0;
+      font-size: 1.3rem;
+    }
+    .model-details p {
+      color: #aaa;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .price {
+      font-weight: 700;
+      color: #ff3c00;
+      margin-bottom: 10px;
+    }
+    .cta-button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 30px;
+      background: #ff3c00;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      text-align: center;
+    }
+    .cta-button:hover {
+      background: #e03500;
+    }
+
+    footer {
+      background: #0a0a0a;
+      padding: 40px 5%;
+      margin-top: 60px;
+      text-align: center;
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: #ff3c00;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo-text">Elite<span>Motors</span></div>
+    <nav>
+      <ul>
+        <li><a href="elite.html">Home</a></li>
+        <li><a href="models.html">Models</a></li>
+        <li><a href="inventory.html">Inventory</a></li>
+        <li><a href="finance.html">Finance</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="page-hero">
+    <h1>Our Luxury Models</h1>
+  </section>
+
+  <!-- Search Bar -->
+  <section class="models-section">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search cars by brand or model...">
+    </div>
+
+    <!-- Cars Grid -->
+    <div class="models-grid" id="modelsGrid"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Elite Motors. All Rights Reserved. | <a href="contact.html">Contact Us</a></p>
+  </footer>
+
+  <!-- JavaScript for Dynamic Cars -->
+  <script>
+    const cars = [
+      { name: "BMW M4 Competition", desc: "503 HP performance coupe", price: "$79,900", img: "https://images.unsplash.com/photo-1580273916550-e323be2ae537" },
+      { name: "Mercedes AMG GT", desc: "523 HP sports luxury", price: "$115,900", img: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf" },
+      { name: "Audi RS7 Sportback", desc: "591 HP luxury sportback", price: "$119,500", img: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341" },
+      { name: "Porsche 911 Turbo S", desc: "640 HP legend", price: "$207,000", img: "https://images.unsplash.com/photo-1619767886558-efdc85fdc4d0" },
+      { name: "Lamborghini Huracan", desc: "V10 supercar beast", price: "$230,000", img: "https://images.unsplash.com/photo-1619983081658-2460e4eb839a" },
+      { name: "Ferrari F8 Tributo", desc: "710 HP pure Ferrari", price: "$276,000", img: "https://images.unsplash.com/photo-1606813904294-59f54af59e63" },
+      { name: "Rolls Royce Ghost", desc: "Luxury masterpiece", price: "$315,000", img: "https://images.unsplash.com/photo-1610465299994-596cb74f179f" },
+      { name: "Tesla Model S Plaid", desc: "Electric 1,020 HP", price: "$135,000", img: "https://images.unsplash.com/photo-1616788075478-73c815d9ef99" },
+      // 🔥 Duplicate and extend this list until you have 100+ cars
+    ];
+
+    function displayCars(filter = "") {
+      const grid = document.getElementById("modelsGrid");
+      grid.innerHTML = "";
+
+      cars.filter(car => car.name.toLowerCase().includes(filter.toLowerCase()))
+          .forEach(car => {
+            grid.innerHTML += `
+              <div class="model-card">
+                <div class="model-image">
+                  <img src="${car.img}?auto=format&fit=crop&w=800&q=80" alt="${car.name}">
+                </div>
+                <div class="model-details">
+                  <h3>${car.name}</h3>
+                  <p>${car.desc}</p>
+                  <div class="price">${car.price}</div>
+                  <button class="cta-button">View Details</button>
+                </div>
+              </div>
+            `;
+          });
+    }
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      displayCars(e.target.value);
+    });
+
+    // Display all on load
+    displayCars();
+  </script>
+
+</body>
+</html>
